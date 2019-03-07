@@ -5,13 +5,26 @@ namespace IronNinja2{
     class Human{
         // Attributes
         protected string _name;
+        public string Name{
+            get{return _name;}
+        }
+        protected bool _isDead;
+        public bool IsDead{
+            get{ return _isDead; }
+            set{;}
+        }
         protected int _health;
+        public int Health{
+            get{ return _health; }
+            set{;}
+        }
         protected int _maxHP;
         protected double _equipmentBonus;
         public double EquipmentBonus{
             get{
                 return _equipmentBonus;
             }
+            set{;}
         }
         protected Dictionary<string,int> _skills = new Dictionary<string,int>{
             {"Strength", 1},
@@ -40,21 +53,46 @@ namespace IronNinja2{
         // Methods
         public int attack(Human target){
             Random rand = new Random();
-            rand.NextDouble()
-            int dmg = calcDamage();
+            
+            int dmg = Convert.ToInt32(rand.Next(_skills["Strength"]) * calcModifiers(target));
+
+            target.hit(dmg);
+
             return dmg;
         }
 
-        protected int calcDamage(Human target){
-            int damage = 0;
-            double offensiveBonus = 0;
+        protected string eat(Food item){
+
+            return Console.WriteLine($"{Name} ate {item.Name} and healed {item.HealsHP}")
+        }
+
+        protected double calcModifiers(Human target){
+            double offensiveBonus = 1.0;
             double defensiveBonus = 0;
+
+            // Calc instance's offensive modifiers
             foreach(KeyValuePair<string, Equipment> entry in WornEquipment){
                 offensiveBonus += entry.Value.OffensiveAttrib;
             }
-            foreach(KeyValuePair<string, Equipment> entry in target.WornEquipment)
 
-            return damage;
+            // Calc target's defensive modifiers
+            foreach(KeyValuePair<string, Equipment> entry in target.WornEquipment){
+                defensiveBonus += entry.Value.DefenseAttrib;
+            }
+
+            return offensiveBonus - defensiveBonus;
+        }
+
+        public void hit (int dmg){
+            _health -= dmg;
+            if (_health <= 0){
+                dead();
+            }
+        }
+
+        protected void dead(){
+            Console.WriteLine("He dead.");
+            _isDead = true;
         }
     }
 
